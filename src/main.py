@@ -92,3 +92,6 @@ while True:
 
     elif escolha_menu == '2':
         escolher_cor()
+    
+    elif escolha_menu == '3':
+        break
