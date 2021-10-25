@@ -9,17 +9,9 @@ cores = {
     'Amarelo': '\033[1;33m',
     'Azul': '\033[1;34m',
     'Magenta': '\033[1;35m',
-    'Cyan': '\033[1;36m',
+    'Ciano': '\033[1;36m',
     'Cinza': '\033[1;90m',
-    'Vermelho Claro': '\033[1;91m',
-    'Verde Claro': '\033[1;92m',
-    'Amarelo Claro': '\033[1;93m',
-    'Azul Claro': '\033[1;94m',
-    'Magenta Claro': '\033[1;95m',
-    'Cyan Claro': '\033[1;96m',
-    'Branco': '\033[1;97m',
-    'Negrito': '\033[; 1m',
-    'Inverte':	'\033[;7m'
+    'Branco': '\033[1;97m'
 }
 
 cores_fundo = {
@@ -31,14 +23,23 @@ cores_fundo = {
     'Magenta': '\033[1;45m',
     'Cyan': '\033[1;46m',
     'Cinza': '\033[1;47m',
-    'Vermelho Claro': '\033[1;101m',
-    'Verde Claro': '\033[1;102m',
-    'Amarelo Claro': '\033[1;103m',
-    'Azul Claro': '\033[1;104m',
-    'Magenta Claro': '\033[1;105m',
-    'Cyan Claro': '\033[1;106m',
     'Branco': '\033[1;107m'
 }
+
+cor_x = 'Vermelho'
+cor_o = 'Azul'
+
+
+def pegar_cores():
+    global cor_x, cor_o
+    with open('.config', 'r') as arquivo:
+        cores = arquivo.readlines()
+        for cor in cores:
+            cor = cor.split('=')
+            if cor[0] == 'cor_x':
+                cor_x = cor[1].strip().strip("'")
+            elif cor[0] == 'cor_o':
+                cor_o = cor[1].strip().strip("'")
 
 
 def colorir(texto: str, cor: str) -> str:
@@ -82,13 +83,30 @@ def mensagem(texto: str, cor: str):
     print(colorir(texto, cor))
 
 
-def cor_jogador(jogador):
+def mudar_cor_jogador(jogador, cor):
+    global cor_x, cor_o
     if jogador == 'X':
-        return 'Vermelho'
+        cor_x = cor
     elif jogador == 'O':
-        return 'Azul'
+        cor_o = cor
+
+    with open('.config', 'w') as arquivo:
+        arquivo.write(f"cor_x='{cor_x}'\n")
+        arquivo.write(f"cor_o='{cor_o}'")
+
+
+def cor_jogador(jogador):
+    global cor_x, cor_o
+    if jogador == 'X':
+        return cor_x
+    elif jogador == 'O':
+        return cor_o
     else:
         return 'Cinza'
+
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def mostrar_jogo(vencedor=None):
@@ -102,7 +120,7 @@ def mostrar_jogo(vencedor=None):
     for chave, valor in posicoes.items():
         posicoes[chave] = colorir(valor, cor_jogador(valor))
 
-    os.system('cls' if os.name == 'nt' else 'clear')
+    clear()
     print(f' {posicoes[1]} | {posicoes[2]} | {posicoes[3]}')
     print('---+---+---')
     print(f' {posicoes[4]} | {posicoes[5]} | {posicoes[6]}')
